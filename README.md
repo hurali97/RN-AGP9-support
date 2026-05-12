@@ -1,3 +1,35 @@
+
+# AGP 9 Support in RN App
+
+- support with bridge helpers, Transition Period - [see](https://github.com/hurali97/RN-AGP9-support/commit/37caf6cb76b47b244ff65f641e68a00876c0cfb3)
+- support without bridge helpers, Real World - [see](https://github.com/hurali97/RN-AGP9-support/commit/ff21313231414286bb498e85985590ac63f23224)
+
+
+### Details of changes
+
+- Use `proguard-android-optimize.txt` in `android/app/build.gradle`
+- Use `kotlinVersion = "2.2.10"` in `android/build.gradle`
+  - If we do not define it, gradle sets it to the above version as default.
+
+#### Enable Bridge Helper
+- Set `android.builtInKotlin=false` and `android.newDsl=false`
+  - This bridge helper is provided by Gradle for the time being until the community catches up.
+  - This allows to bypass issues with third party libs like `react-native-safe-area-context`
+
+#### Disable Bridge Helper
+- Set `android.builtInKotlin=true` and `android.newDsl=true`
+- Remove `apply plugin: "org.jetbrains.kotlin.android"` from `android/app/build.gradle`
+- Remove the following from `react-native-safe-area-context`:
+```diff
+-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+-        classpath("com.android.tools.build:gradle:7.3.1")
+
+-        apply plugin: 'kotlin-android'
+```
+
+<hr/>
+<br/>
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
