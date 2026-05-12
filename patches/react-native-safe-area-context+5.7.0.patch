@@ -1,0 +1,40 @@
+diff --git a/node_modules/react-native-safe-area-context/android/build.gradle b/node_modules/react-native-safe-area-context/android/build.gradle
+index f324b9a..f1b818d 100644
+--- a/node_modules/react-native-safe-area-context/android/build.gradle
++++ b/node_modules/react-native-safe-area-context/android/build.gradle
+@@ -7,8 +7,6 @@ buildscript {
+     }
+ 
+     dependencies {
+-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+-        classpath("com.android.tools.build:gradle:7.3.1")
+         classpath("com.diffplug.spotless:spotless-plugin-gradle:6.11.0")
+     }
+ }
+@@ -32,7 +30,6 @@ def isNewArchitectureEnabled() {
+ }
+ 
+ apply plugin: 'com.android.library'
+-apply plugin: 'kotlin-android'
+ 
+ if (isNewArchitectureEnabled()) {
+     apply plugin: "com.facebook.react"
+@@ -94,6 +91,18 @@ android {
+                 ]
+             }
+         }
++        kotlin {
++            if (isNewArchitectureEnabled()) {
++                srcDirs += [
++                    "src/fabric/java",
++                    "${project.buildDir}/generated/source/codegen/java"
++                ]
++            } else {
++                srcDirs += [
++                    "src/paper/java"
++                ]
++            }
++        }
+     }
+ }
+ 
