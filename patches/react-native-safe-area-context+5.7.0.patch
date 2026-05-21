@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-safe-area-context/android/build.gradle b/node_modules/react-native-safe-area-context/android/build.gradle
-index f324b9a..275d1ea 100644
+index f324b9a..1f7c6dd 100644
 --- a/node_modules/react-native-safe-area-context/android/build.gradle
 +++ b/node_modules/react-native-safe-area-context/android/build.gradle
 @@ -7,8 +7,6 @@ buildscript {
@@ -11,15 +11,31 @@ index f324b9a..275d1ea 100644
          classpath("com.diffplug.spotless:spotless-plugin-gradle:6.11.0")
      }
  }
-@@ -32,7 +30,6 @@ def isNewArchitectureEnabled() {
+@@ -32,15 +30,20 @@ def isNewArchitectureEnabled() {
  }
  
  apply plugin: 'com.android.library'
 -apply plugin: 'kotlin-android'
++def agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
++
++// AGP 9 handles Kotlin differently via built-in Kotlin support, while AGP 8
++// still needs the classic kotlin-android plugin path for mixed Java/Kotlin source sets.
++if (agpMajor < 9) {
++    apply plugin: 'kotlin-android'
++}
  
  if (isNewArchitectureEnabled()) {
      apply plugin: "com.facebook.react"
-@@ -82,17 +79,20 @@ android {
+ }
+ 
+ android {
+-    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
+-    if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
++    if (agpMajor >= 7) {
+         namespace "com.th3rdwave.safeareacontext"
+         buildFeatures {
+             buildConfig true
+@@ -82,17 +85,20 @@ android {
          exclude "**/libreact_render*.so"
      }
      sourceSets.main {
