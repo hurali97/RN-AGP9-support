@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android --mode release",
+    "agp:9": "node scripts/switch-agp.js agp9",
+    "agp:prev": "node scripts/switch-agp.js agpPrev",
+    "agp:status": "node scripts/switch-agp.js status",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "postinstall": "patch-package",
