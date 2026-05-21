@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-safe-area-context/android/build.gradle b/node_modules/react-native-safe-area-context/android/build.gradle
-index f324b9a..f1b818d 100644
+index f324b9a..275d1ea 100644
 --- a/node_modules/react-native-safe-area-context/android/build.gradle
 +++ b/node_modules/react-native-safe-area-context/android/build.gradle
 @@ -7,8 +7,6 @@ buildscript {
@@ -19,22 +19,35 @@ index f324b9a..f1b818d 100644
  
  if (isNewArchitectureEnabled()) {
      apply plugin: "com.facebook.react"
-@@ -94,6 +91,18 @@ android {
-                 ]
-             }
+@@ -82,17 +79,20 @@ android {
+         exclude "**/libreact_render*.so"
+     }
+     sourceSets.main {
+-        java {
+-            if (isNewArchitectureEnabled()) {
+-                srcDirs += [
+-                    "src/fabric/java",
+-                    "${project.buildDir}/generated/source/codegen/java"
+-                ]
+-            } else {
+-                srcDirs += [
+-                    "src/paper/java"
+-                ]
+-            }
++        if (isNewArchitectureEnabled()) {
++            java.srcDirs += [
++                "${project.buildDir}/generated/source/codegen/java" // contains only java files
++            ]
++            kotlin.srcDirs += [
++                "src/fabric/java", // contains only kotlin files
++            ]
++        } else {
++            java.srcDirs += [
++                "src/paper/java" // contains both java and kotlin files
++            ]
++            kotlin.srcDirs += [
++                "src/paper/java" // contains both java and kotlin files
++            ]
          }
-+        kotlin {
-+            if (isNewArchitectureEnabled()) {
-+                srcDirs += [
-+                    "src/fabric/java",
-+                    "${project.buildDir}/generated/source/codegen/java"
-+                ]
-+            } else {
-+                srcDirs += [
-+                    "src/paper/java"
-+                ]
-+            }
-+        }
      }
  }
- 
