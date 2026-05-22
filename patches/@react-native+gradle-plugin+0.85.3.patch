@@ -1,0 +1,75 @@
+diff --git a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/ReactPlugin.kt b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/ReactPlugin.kt
+index e7859ff..3c7da45 100644
+--- a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/ReactPlugin.kt
++++ b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/ReactPlugin.kt
+@@ -98,8 +98,8 @@ class ReactPlugin : Plugin<Project> {
+     }
+ 
+     // Library Only Configuration
+-    configureBuildConfigFieldsForLibraries(project)
+-    configureNamespaceForLibraries(project)
++//    configureBuildConfigFieldsForLibraries(project)
++//    configureNamespaceForLibraries(project)
+     project.pluginManager.withPlugin("com.android.library") {
+       configureCodegen(project, extension, rootExtension, isLibrary = true)
+     }
+diff --git a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/AgpConfiguratorUtils.kt b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/AgpConfiguratorUtils.kt
+index c4a7b35..0d479cd 100644
+--- a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/AgpConfiguratorUtils.kt
++++ b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/AgpConfiguratorUtils.kt
+@@ -9,7 +9,8 @@ package com.facebook.react.utils
+ 
+ import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+ import com.android.build.api.variant.LibraryAndroidComponentsExtension
+-import com.android.build.gradle.LibraryExtension
++//import com.android.build.gradle.LibraryExtension
++import com.android.build.api.dsl.LibraryExtension
+ import com.facebook.react.ReactExtension
+ import com.facebook.react.utils.ProjectUtils.isEdgeToEdgeEnabled
+ import com.facebook.react.utils.ProjectUtils.isHermesEnabled
+@@ -80,9 +81,8 @@ internal object AgpConfiguratorUtils {
+   fun configureBuildConfigFieldsForLibraries(appProject: Project) {
+     appProject.rootProject.allprojects { subproject ->
+       subproject.pluginManager.withPlugin("com.android.library") {
+-        subproject.extensions
+-            .getByType(LibraryAndroidComponentsExtension::class.java)
+-            .finalizeDsl { ext -> ext.buildFeatures.buildConfig = true }
++          val android = subproject.extensions.findByType(LibraryExtension::class.java)
++          android?.buildFeatures?.buildConfig = true
+       }
+     }
+   }
+@@ -114,22 +114,18 @@ internal object AgpConfiguratorUtils {
+   fun configureNamespaceForLibraries(appProject: Project) {
+     appProject.rootProject.allprojects { subproject ->
+       subproject.pluginManager.withPlugin("com.android.library") {
+-        subproject.extensions
+-            .getByType(LibraryAndroidComponentsExtension::class.java)
+-            .finalizeDsl { ext ->
+-              if (ext.namespace == null) {
+-                val android = subproject.extensions.getByType(LibraryExtension::class.java)
+-                val manifestFile = android.sourceSets.getByName("main").manifest.srcFile
+-
+-                manifestFile
+-                    .takeIf { it.exists() }
+-                    ?.let { file ->
+-                      getPackageNameFromManifest(file)?.let { packageName ->
+-                        ext.namespace = packageName
+-                      }
+-                    }
++          val android = subproject.extensions.findByType(LibraryExtension::class.java) ?: return@withPlugin
++          if (android.namespace == null) {
++              val manifestFile = subproject.layout.projectDirectory
++                  .file("src/main/AndroidManifest.xml")
++                  .asFile
++
++              manifestFile.takeIf { it.exists() }?.let { file ->
++                  getPackageNameFromManifest(file)?.let { packageName ->
++                      android.namespace = packageName
++                  }
+               }
+-            }
++          }
+       }
+     }
+   }
