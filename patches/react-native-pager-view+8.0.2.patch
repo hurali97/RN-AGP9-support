@@ -1,0 +1,25 @@
+diff --git a/node_modules/react-native-pager-view/android/build.gradle b/node_modules/react-native-pager-view/android/build.gradle
+index b46c366..84b3738 100644
+--- a/node_modules/react-native-pager-view/android/build.gradle
++++ b/node_modules/react-native-pager-view/android/build.gradle
+@@ -6,12 +6,6 @@ buildscript {
+     google()
+     mavenCentral()
+   }
+-
+-  dependencies {
+-    classpath 'com.android.tools.build:gradle:4.2.1'
+-    // noinspection DifferentKotlinGradleVersion
+-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+-  }
+ }
+ 
+ def isNewArchitectureEnabled() {
+@@ -19,7 +13,6 @@ def isNewArchitectureEnabled() {
+ }
+ 
+ apply plugin: 'com.android.library'
+-apply plugin: 'kotlin-android'
+ 
+ 
+ if (isNewArchitectureEnabled()) {
