@@ -5,6 +5,7 @@
  * @format
  */
 
+import { useState } from 'react';
 import { NewAppScreen } from '@react-native/new-app-screen';
 import {
   Text,
@@ -20,7 +21,7 @@ import {
 } from 'react-native-safe-area-context';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 import PagerView from 'react-native-pager-view';
-import { useState } from 'react';
+import Share from 'react-native-share';
 
 const MyPager = () => {
   return (
@@ -72,12 +73,37 @@ const MyAnimated = () => {
   );
 };
 
-const ComponentSwitcher = ({ type }: { type: 'pager' | 'animated' }) => {
+const MyShare = () => {
+  const handleShare = () => {
+    Share.open({
+      message: 'Share this',
+      url: 'https://www.google.com',
+    })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  };
+
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Button onPress={handleShare} title="Share" />
+    </View>
+  );
+};
+
+type ComponentType = 'pager' | 'animated' | 'share';
+
+const ComponentSwitcher = ({ type }: { type: ComponentType }) => {
   switch (type) {
     case 'pager':
       return <MyPager />;
     case 'animated':
       return <MyAnimated />;
+    case 'share':
+      return <MyShare />;
     default:
       return <AppContent />;
   }
@@ -85,7 +111,7 @@ const ComponentSwitcher = ({ type }: { type: 'pager' | 'animated' }) => {
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
-  const [type, setType] = useState<'pager' | 'animated'>('pager');
+  const [type, setType] = useState<ComponentType>('pager');
 
   return (
     <SafeAreaProvider>
@@ -99,11 +125,20 @@ function App() {
           position: 'absolute',
           bottom: 50,
           right: 0,
+          gap: 10,
         }}
       >
         <Button
-          onPress={() => setType(type === 'pager' ? 'animated' : 'pager')}
-          title={`Switch to ${type === 'pager' ? 'animated' : 'pager'}`}
+          onPress={() => setType('pager')}
+          title="Switch to pager"
+        />
+        <Button
+          onPress={() => setType('animated')}
+          title="Switch to animated"
+        />
+        <Button
+          onPress={() => setType('share')}
+          title="Switch to share"
         />
       </View>
     </SafeAreaProvider>
