@@ -1,13 +1,26 @@
 diff --git a/node_modules/react-native-worklets/android/build.gradle b/node_modules/react-native-worklets/android/build.gradle
-index e189e1c..524ccf7 100644
+index e189e1c..995a6c0 100644
 --- a/node_modules/react-native-worklets/android/build.gradle
 +++ b/node_modules/react-native-worklets/android/build.gradle
-@@ -171,12 +171,28 @@ apply plugin: "de.undercouch.download"
+@@ -159,7 +159,6 @@ buildscript {
+         mavenCentral()
+     }
+     dependencies {
+-        classpath "com.android.tools.build:gradle:8.13.1"
+         classpath "de.undercouch:gradle-download-task:5.6.0"
+         classpath "com.diffplug.spotless:spotless-plugin-gradle:8.1.0"
+     }
+@@ -169,14 +168,34 @@ apply plugin: "com.android.library"
+ apply plugin: "maven-publish"
+ apply plugin: "de.undercouch.download"
  
++def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
++
  if (project == rootProject) {
      apply from: "spotless.gradle"
 -} else {
--    apply plugin: "org.jetbrains.kotlin.android"
++} else if (agpVersion < 9) {
+     apply plugin: "org.jetbrains.kotlin.android"
  }
  
  apply from: "./fix-prefab.gradle"
@@ -33,18 +46,15 @@ index e189e1c..524ccf7 100644
  
  android {
      compileSdkVersion safeExtGet("compileSdkVersion", 36)
-@@ -294,11 +310,6 @@ android {
+@@ -294,7 +313,7 @@ android {
              }
          }
      }
 -    if (project != rootProject) {
--        kotlinOptions {
--            jvmTarget = '17'
--        }
--    }
-     tasks.withType(ExternalNativeBuildJsonTask).tap {
-         configureEach { compileTask ->
-             compileTask.doLast {
++    if (project != rootProject && agpVersion < 9) {
+         kotlinOptions {
+             jvmTarget = '17'
+         }
 diff --git a/node_modules/react-native-worklets/android/fix-prefab.gradle b/node_modules/react-native-worklets/android/fix-prefab.gradle
 index fcf502a..f4984fe 100644
 --- a/node_modules/react-native-worklets/android/fix-prefab.gradle
