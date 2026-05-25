@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android --mode release",
+    "android": "react-native run-android --mode debug",
     "agp:9": "node scripts/switch-agp.js agp9",
     "agp:prev": "node scripts/switch-agp.js agpPrev",
     "agp:status": "node scripts/switch-agp.js status",
@@ -16,6 +16,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.1.0",
     "@react-native/new-app-screen": "0.85.3",
+    "@shopify/react-native-skia": "^2.6.3",
     "react": "19.2.3",
     "react-native": "0.85.3",
     "react-native-mmkv": "^4.3.1",

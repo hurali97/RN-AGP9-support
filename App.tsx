@@ -22,6 +22,7 @@ import {
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 import PagerView from 'react-native-pager-view';
 import Share from 'react-native-share';
+import { Canvas, Circle, Group } from '@shopify/react-native-skia';
 
 const MyPager = () => {
   return (
@@ -94,7 +95,22 @@ const MyShare = () => {
   );
 };
 
-type ComponentType = 'pager' | 'animated' | 'share';
+const MySkia = () => {
+  const width = 256;
+  const height = 256;
+  const r = width * 0.33;
+  return (
+    <Canvas style={{ width, height, alignSelf: 'center', marginTop: 100 }}>
+      <Group blendMode="multiply">
+        <Circle cx={r} cy={r} r={r} color="cyan" />
+        <Circle cx={width - r} cy={r} r={r} color="magenta" />
+        <Circle cx={width / 2} cy={width - r} r={r} color="yellow" />
+      </Group>
+    </Canvas>
+  );
+};
+
+type ComponentType = 'pager' | 'animated' | 'share' | 'skia';
 
 const ComponentSwitcher = ({ type }: { type: ComponentType }) => {
   switch (type) {
@@ -104,6 +120,8 @@ const ComponentSwitcher = ({ type }: { type: ComponentType }) => {
       return <MyAnimated />;
     case 'share':
       return <MyShare />;
+    case 'skia':
+      return <MySkia />;
     default:
       return <AppContent />;
   }
@@ -139,6 +157,10 @@ function App() {
         <Button
           onPress={() => setType('share')}
           title="Switch to share"
+        />
+        <Button
+          onPress={() => setType('skia')}
+          title="Switch to skia"
         />
       </View>
     </SafeAreaProvider>
