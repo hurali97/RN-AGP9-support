@@ -36,6 +36,10 @@ function HomeScreen() {
           onPress={() => navigation.navigate('Details', { type: 'skia' })}
           title="Switch to skia"
         />
+        <Button
+          onPress={() => navigation.navigate('Details', { type: 'svg' })}
+          title="Switch to svg"
+        />
       </View>
     </SafeAreaProvider>
   );

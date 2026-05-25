@@ -1,9 +1,41 @@
-import { Button, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 import PagerView from 'react-native-pager-view';
 import Share from 'react-native-share';
 import { Canvas, Circle, Group } from '@shopify/react-native-skia';
 import type { StaticScreenProps } from '@react-navigation/native';
+import Svg, { Circle as SvgCircle, Rect } from 'react-native-svg';
+
+const MySvg = () => {
+  return (
+    <View
+      style={[
+        StyleSheet.absoluteFill,
+        { alignItems: 'center', justifyContent: 'center' },
+      ]}
+    >
+      <Svg height="50%" width="50%" viewBox="0 0 100 100">
+        <SvgCircle
+          cx="50"
+          cy="50"
+          r="45"
+          stroke="blue"
+          strokeWidth="2.5"
+          fill="green"
+        />
+        <Rect
+          x="15"
+          y="15"
+          width="70"
+          height="70"
+          stroke="red"
+          strokeWidth="2"
+          fill="yellow"
+        />
+      </Svg>
+    </View>
+  );
+};
 
 const MyPager = () => {
   return (
@@ -61,12 +93,12 @@ const MyShare = () => {
       message: 'Share this',
       url: 'https://www.google.com',
     })
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   return (
@@ -91,9 +123,7 @@ const MySkia = () => {
   );
 };
 
-type ComponentType = 'pager' | 'animated' | 'share' | 'skia';
-
-//   const [type, setType] = useState<ComponentType>('pager');
+type ComponentType = 'pager' | 'animated' | 'share' | 'skia' | 'svg';
 
 const ComponentSwitcher = ({ type }: { type: ComponentType }) => {
   switch (type) {
@@ -105,14 +135,16 @@ const ComponentSwitcher = ({ type }: { type: ComponentType }) => {
       return <MyShare />;
     case 'skia':
       return <MySkia />;
+    case 'svg':
+      return <MySvg />;
     default:
       return null;
   }
 };
 
 type Props = StaticScreenProps<{
-    type: ComponentType;
-  }>;
+  type: ComponentType;
+}>;
 
 const DetailsScreen = ({ route }: Props) => {
   const { type } = route.params;
