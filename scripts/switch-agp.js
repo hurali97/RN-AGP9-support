@@ -9,7 +9,7 @@ const agpStatePath = path.join(projectRoot, ".agp-channel");
 
 const channels = {
   agp9: {
-    agpVersion: "9.0.0",
+    agpVersion: "9.2.0",
     builtInKotlin: "true",
     newDsl: "true",
   },
