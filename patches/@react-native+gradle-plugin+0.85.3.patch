@@ -1,16 +1,32 @@
 diff --git a/node_modules/@react-native/gradle-plugin/gradle/libs.versions.toml b/node_modules/@react-native/gradle-plugin/gradle/libs.versions.toml
-index c7502fc..e73e2a1 100644
+index c7502fc..65dd0b1 100644
 --- a/node_modules/@react-native/gradle-plugin/gradle/libs.versions.toml
 +++ b/node_modules/@react-native/gradle-plugin/gradle/libs.versions.toml
-@@ -4,7 +4,7 @@ gson = "2.8.9"
+@@ -1,10 +1,10 @@
+ [versions]
+-agp = "8.12.0"
++agp = "9.2.1"
+ gson = "2.8.9"
  guava = "31.0.1-jre"
  javapoet = "1.13.0"
  junit = "4.13.2"
 -kotlin = "2.1.20"
-+kotlin = "2.3.21"
++kotlin = "2.2.0"
  assertj = "3.25.1"
  ktfmt = "0.22.0"
  
+diff --git a/node_modules/@react-native/gradle-plugin/gradle/wrapper/gradle-wrapper.properties b/node_modules/@react-native/gradle-plugin/gradle/wrapper/gradle-wrapper.properties
+index 37f78a6..c61a118 100644
+--- a/node_modules/@react-native/gradle-plugin/gradle/wrapper/gradle-wrapper.properties
++++ b/node_modules/@react-native/gradle-plugin/gradle/wrapper/gradle-wrapper.properties
+@@ -1,6 +1,6 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.4.1-bin.zip
+ networkTimeout=10000
+ validateDistributionUrl=true
+ zipStoreBase=GRADLE_USER_HOME
 diff --git a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts
 index 85dadeb..8461286 100644
 --- a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts
