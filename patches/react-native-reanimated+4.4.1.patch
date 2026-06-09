@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-reanimated/android/build.gradle.kts b/node_modules/react-native-reanimated/android/build.gradle.kts
+index 9825070..43d1bee 100644
+--- a/node_modules/react-native-reanimated/android/build.gradle.kts
++++ b/node_modules/react-native-reanimated/android/build.gradle.kts
+@@ -9,7 +9,6 @@ plugins {
+     id("com.android.library")
+     id("maven-publish")
+     id("com.diffplug.spotless") version "8.4.0"
+-    id("org.jetbrains.kotlin.android")
+ }
+ 
+ fun safeExtGet(prop: String, fallback: Any?): Any? =

@@ -28,7 +28,7 @@ index 37f78a6..c61a118 100644
  validateDistributionUrl=true
  zipStoreBase=GRADLE_USER_HOME
 diff --git a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts
-index 85dadeb..8461286 100644
+index 85dadeb..c4f92db 100644
 --- a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts
 +++ b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/build.gradle.kts
 @@ -64,7 +64,7 @@ kotlin { jvmToolchain(17) }
@@ -36,55 +36,62 @@ index 85dadeb..8461286 100644
  tasks.withType<KotlinCompile>().configureEach {
    compilerOptions {
 -    apiVersion.set(KotlinVersion.KOTLIN_1_8)
-+    apiVersion.set(KotlinVersion.KOTLIN_2_1)
++    apiVersion.set(KotlinVersion.KOTLIN_2_0)
      // See comment above on JDK 11 support
      jvmTarget.set(JvmTarget.JVM_11)
      allWarningsAsErrors.set(
 diff --git a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/ReactPlugin.kt b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/ReactPlugin.kt
-index e7859ff..3c7da45 100644
+index e7859ff..ab566a5 100644
 --- a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/ReactPlugin.kt
 +++ b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/ReactPlugin.kt
-@@ -98,8 +98,8 @@ class ReactPlugin : Plugin<Project> {
+@@ -98,9 +98,9 @@ class ReactPlugin : Plugin<Project> {
      }
  
      // Library Only Configuration
 -    configureBuildConfigFieldsForLibraries(project)
 -    configureNamespaceForLibraries(project)
-+//    configureBuildConfigFieldsForLibraries(project)
-+//    configureNamespaceForLibraries(project)
      project.pluginManager.withPlugin("com.android.library") {
++      configureBuildConfigFieldsForLibraries(project)
++      configureNamespaceForLibraries(project)
        configureCodegen(project, extension, rootExtension, isLibrary = true)
      }
+   }
 diff --git a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/AgpConfiguratorUtils.kt b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/AgpConfiguratorUtils.kt
-index c4a7b35..0d479cd 100644
+index c4a7b35..838f64e 100644
 --- a/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/AgpConfiguratorUtils.kt
 +++ b/node_modules/@react-native/gradle-plugin/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/AgpConfiguratorUtils.kt
-@@ -9,7 +9,8 @@ package com.facebook.react.utils
+@@ -9,7 +9,6 @@ package com.facebook.react.utils
  
  import com.android.build.api.variant.ApplicationAndroidComponentsExtension
  import com.android.build.api.variant.LibraryAndroidComponentsExtension
 -import com.android.build.gradle.LibraryExtension
-+//import com.android.build.gradle.LibraryExtension
-+import com.android.build.api.dsl.LibraryExtension
  import com.facebook.react.ReactExtension
  import com.facebook.react.utils.ProjectUtils.isEdgeToEdgeEnabled
  import com.facebook.react.utils.ProjectUtils.isHermesEnabled
-@@ -80,9 +81,8 @@ internal object AgpConfiguratorUtils {
-   fun configureBuildConfigFieldsForLibraries(appProject: Project) {
-     appProject.rootProject.allprojects { subproject ->
-       subproject.pluginManager.withPlugin("com.android.library") {
+@@ -77,13 +76,9 @@ internal object AgpConfiguratorUtils {
+     project.pluginManager.withPlugin("com.android.library", action)
+   }
+ 
+-  fun configureBuildConfigFieldsForLibraries(appProject: Project) {
+-    appProject.rootProject.allprojects { subproject ->
+-      subproject.pluginManager.withPlugin("com.android.library") {
 -        subproject.extensions
 -            .getByType(LibraryAndroidComponentsExtension::class.java)
 -            .finalizeDsl { ext -> ext.buildFeatures.buildConfig = true }
-+          val android = subproject.extensions.findByType(LibraryExtension::class.java)
-+          android?.buildFeatures?.buildConfig = true
-       }
+-      }
++  fun configureBuildConfigFieldsForLibraries(project: Project) {
++    project.extensions.getByType(LibraryAndroidComponentsExtension::class.java).finalizeDsl { ext ->
++      ext.buildFeatures.buildConfig = true
      }
    }
-@@ -114,22 +114,18 @@ internal object AgpConfiguratorUtils {
-   fun configureNamespaceForLibraries(appProject: Project) {
-     appProject.rootProject.allprojects { subproject ->
-       subproject.pluginManager.withPlugin("com.android.library") {
+ 
+@@ -111,23 +106,16 @@ internal object AgpConfiguratorUtils {
+     project.pluginManager.withPlugin("com.android.library", action)
+   }
+ 
+-  fun configureNamespaceForLibraries(appProject: Project) {
+-    appProject.rootProject.allprojects { subproject ->
+-      subproject.pluginManager.withPlugin("com.android.library") {
 -        subproject.extensions
 -            .getByType(LibraryAndroidComponentsExtension::class.java)
 -            .finalizeDsl { ext ->
@@ -99,24 +106,21 @@ index c4a7b35..0d479cd 100644
 -                        ext.namespace = packageName
 -                      }
 -                    }
-+          val android = subproject.extensions.findByType(LibraryExtension::class.java) ?: return@withPlugin
-+          if (android.namespace == null) {
-+              val manifestFile = subproject.layout.projectDirectory
-+                  .file("src/main/AndroidManifest.xml")
-+                  .asFile
-+
-+              manifestFile.takeIf { it.exists() }?.let { file ->
-+                  getPackageNameFromManifest(file)?.let { packageName ->
-+                      android.namespace = packageName
-+                  }
++  fun configureNamespaceForLibraries(project: Project) {
++    project.extensions.getByType(LibraryAndroidComponentsExtension::class.java).finalizeDsl { ext ->
++      if (ext.namespace == null) {
++        val manifestFile =
++            project.layout.projectDirectory.file("src/main/AndroidManifest.xml").asFile
++        manifestFile
++            .takeIf { it.exists() }
++            ?.let { file ->
++              getPackageNameFromManifest(file)?.let { packageName ->
++                ext.namespace = packageName
                }
--            }
-+          }
+             }
        }
-     }
-   }
 diff --git a/node_modules/@react-native/gradle-plugin/settings-plugin/build.gradle.kts b/node_modules/@react-native/gradle-plugin/settings-plugin/build.gradle.kts
-index 2fbeafd..bf7f623 100644
+index 2fbeafd..870844c 100644
 --- a/node_modules/@react-native/gradle-plugin/settings-plugin/build.gradle.kts
 +++ b/node_modules/@react-native/gradle-plugin/settings-plugin/build.gradle.kts
 @@ -54,7 +54,7 @@ kotlin { jvmToolchain(17) }
@@ -124,12 +128,12 @@ index 2fbeafd..bf7f623 100644
  tasks.withType<KotlinCompile>().configureEach {
    compilerOptions {
 -    apiVersion.set(KotlinVersion.KOTLIN_1_8)
-+    apiVersion.set(KotlinVersion.KOTLIN_2_1)
++    apiVersion.set(KotlinVersion.KOTLIN_2_0)
      // See comment above on JDK 11 support
      jvmTarget.set(JvmTarget.JVM_11)
      allWarningsAsErrors.set(
 diff --git a/node_modules/@react-native/gradle-plugin/shared/build.gradle.kts b/node_modules/@react-native/gradle-plugin/shared/build.gradle.kts
-index 3159848..a15e83d 100644
+index 3159848..9395aab 100644
 --- a/node_modules/@react-native/gradle-plugin/shared/build.gradle.kts
 +++ b/node_modules/@react-native/gradle-plugin/shared/build.gradle.kts
 @@ -33,7 +33,7 @@ kotlin { jvmToolchain(17) }
@@ -137,7 +141,7 @@ index 3159848..a15e83d 100644
  tasks.withType<KotlinCompile>().configureEach {
    compilerOptions {
 -    apiVersion.set(KotlinVersion.KOTLIN_1_8)
-+    apiVersion.set(KotlinVersion.KOTLIN_2_1)
++    apiVersion.set(KotlinVersion.KOTLIN_2_0)
      // See comment above on JDK 11 support
      jvmTarget.set(JvmTarget.JVM_11)
      allWarningsAsErrors.set(

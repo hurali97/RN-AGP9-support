@@ -1,0 +1,27 @@
+diff --git a/node_modules/react-native-worklets/android/build.gradle.kts b/node_modules/react-native-worklets/android/build.gradle.kts
+index 6b80964..3496c47 100644
+--- a/node_modules/react-native-worklets/android/build.gradle.kts
++++ b/node_modules/react-native-worklets/android/build.gradle.kts
+@@ -9,7 +9,6 @@ plugins {
+     id("com.android.library")
+     id("maven-publish")
+     id("com.diffplug.spotless") version "8.1.0"
+-    id("org.jetbrains.kotlin.android")
+ }
+ 
+ fun safeExtGet(prop: String, fallback: Any?): Any? =
+@@ -265,11 +264,11 @@ android {
+ 
+     sourceSets {
+         getByName("main") {
+-            java {
++            kotlin {
+                 if (FETCH_PREVIEW_ENABLED) {
+-                    srcDir("src/networking")
++                    directories.add("src/networking")
+                 } else {
+-                    srcDir("src/no-networking")
++                    directories.add("src/no-networking")
+                 }
+             }
+         }

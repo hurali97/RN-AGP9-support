@@ -1,17 +1,8 @@
 diff --git a/node_modules/react-native-screens/android/build.gradle b/node_modules/react-native-screens/android/build.gradle
-index d3ede15..1b74d0b 100644
+index d3ede15..e6b32be 100644
 --- a/node_modules/react-native-screens/android/build.gradle
 +++ b/node_modules/react-native-screens/android/build.gradle
-@@ -20,8 +20,6 @@ buildscript {
-         mavenCentral()
-     }
-     dependencies {
--        classpath('com.android.tools.build:gradle:8.2.1')
--        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
-         classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
-     }
- }
-@@ -86,7 +84,6 @@ if (isRunningInContextOfScreensRepo()) {
+@@ -86,7 +86,6 @@ if (isRunningInContextOfScreensRepo()) {
      apply plugin: "com.facebook.react"
  }
  apply plugin: 'com.android.library'
@@ -19,12 +10,25 @@ index d3ede15..1b74d0b 100644
  
  def reactNativeArchitectures() {
      def value = project.getProperties().get("reactNativeArchitectures")
-@@ -175,7 +172,7 @@ android {
+@@ -175,16 +174,15 @@ android {
      }
      sourceSets.main {
          ext.androidResDir = "src/main/res"
 -        java {
+-            srcDirs += [
+-                "src/fabric/java",
+-            ]
 +        kotlin {
-             srcDirs += [
-                 "src/fabric/java",
-             ]
++            directories.add("src/fabric/java")
+         }
+         res {
+             if (safeExtGet(['compileSdkVersion', 'compileSdk'], rnsDefaultCompileSdkVersion) >= 33) {
+-                srcDirs = ["${androidResDir}/base", "${androidResDir}/v33"]
++                directories.add("${androidResDir}/base")
++                directories.add("${androidResDir}/v33")
+             } else {
+-                srcDirs = ["${androidResDir}/base"]
++                directories.add("${androidResDir}/base")
+             }
+         }
+     }

@@ -1,17 +1,8 @@
 diff --git a/node_modules/react-native-safe-area-context/android/build.gradle b/node_modules/react-native-safe-area-context/android/build.gradle
-index f324b9a..1f7c6dd 100644
+index f324b9a..8ea906c 100644
 --- a/node_modules/react-native-safe-area-context/android/build.gradle
 +++ b/node_modules/react-native-safe-area-context/android/build.gradle
-@@ -7,8 +7,6 @@ buildscript {
-     }
- 
-     dependencies {
--        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
--        classpath("com.android.tools.build:gradle:7.3.1")
-         classpath("com.diffplug.spotless:spotless-plugin-gradle:6.11.0")
-     }
- }
-@@ -32,15 +30,20 @@ def isNewArchitectureEnabled() {
+@@ -32,15 +32,20 @@ def isNewArchitectureEnabled() {
  }
  
  apply plugin: 'com.android.library'
@@ -35,7 +26,7 @@ index f324b9a..1f7c6dd 100644
          namespace "com.th3rdwave.safeareacontext"
          buildFeatures {
              buildConfig true
-@@ -82,17 +85,20 @@ android {
+@@ -82,17 +87,11 @@ android {
          exclude "**/libreact_render*.so"
      }
      sourceSets.main {
@@ -51,19 +42,10 @@ index f324b9a..1f7c6dd 100644
 -                ]
 -            }
 +        if (isNewArchitectureEnabled()) {
-+            java.srcDirs += [
-+                "${project.buildDir}/generated/source/codegen/java" // contains only java files
-+            ]
-+            kotlin.srcDirs += [
-+                "src/fabric/java", // contains only kotlin files
-+            ]
++            java.directories.add("${project.buildDir}/generated/source/codegen/java") // contains only java files
++            kotlin.directories.add("src/fabric/java") // contains only kotlin files
 +        } else {
-+            java.srcDirs += [
-+                "src/paper/java" // contains both java and kotlin files
-+            ]
-+            kotlin.srcDirs += [
-+                "src/paper/java" // contains both java and kotlin files
-+            ]
++            java.directories.add("src/paper/java") // contains both java and kotlin files
          }
      }
  }
