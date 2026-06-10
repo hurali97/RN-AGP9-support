@@ -1,25 +1,48 @@
 diff --git a/node_modules/react-native-nitro-modules/android/build.gradle b/node_modules/react-native-nitro-modules/android/build.gradle
-index 6721e9c..2931a42 100644
+index 6721e9c..6f78ad1 100644
 --- a/node_modules/react-native-nitro-modules/android/build.gradle
 +++ b/node_modules/react-native-nitro-modules/android/build.gradle
-@@ -5,10 +5,6 @@ buildscript {
-     google()
-     mavenCentral()
-   }
--
--  dependencies {
--    classpath "com.android.tools.build:gradle:9.2.1"
--  }
- }
- 
- def reactNativeArchitectures() {
-@@ -21,9 +17,27 @@ def isNewArchitectureEnabled() {
+@@ -21,7 +21,6 @@ def isNewArchitectureEnabled() {
  }
  
  apply plugin: "com.android.library"
 -apply plugin: 'org.jetbrains.kotlin.android'
  apply from: "./fix-prefab.gradle"
  
+ if (isNewArchitectureEnabled()) {
+@@ -124,13 +123,11 @@ android {
+   sourceSets {
+     main {
+       if (isNewArchitectureEnabled()) {
+-        java.srcDirs += [
++        java.directories.add("${project.buildDir}/generated/source/codegen/java")
+           // React Codegen files
+-          "${project.buildDir}/generated/source/codegen/java",
+-          "src/newarch"
+-        ]
++        kotlin.directories.add("src/newarch")
+       } else {
+-        java.srcDirs += ["src/oldarch"]
++        kotlin.directories.add("src/oldarch")
+       }
+     }
+   }
+diff --git a/node_modules/react-native-nitro-modules/android/fix-prefab.gradle b/node_modules/react-native-nitro-modules/android/fix-prefab.gradle
+index d6c010e..57513a0 100644
+--- a/node_modules/react-native-nitro-modules/android/fix-prefab.gradle
++++ b/node_modules/react-native-nitro-modules/android/fix-prefab.gradle
+@@ -12,39 +12,20 @@ tasks.configureEach { task ->
+   }
+ }
+ 
+-afterEvaluate {
+-  def abis = reactNativeArchitectures()
+-  rootProject.allprojects.each { proj ->
+-    if (proj === rootProject) return
+-
+-    def dependsOnThisLib = proj.configurations.findAll { it.canBeResolved }.any { config ->
+-      config.dependencies.any { dep ->
+-        dep.group == project.group && dep.name == project.name
 +androidComponents {
 +  onVariants(selector().all()) { variant ->
 +    def abis = reactNativeArchitectures()
@@ -31,44 +54,7 @@ index 6721e9c..2931a42 100644
 +      searchDir.eachDir { randomDir ->
 +        def prefabFile = new File(randomDir, "${abi}/prefab_config.json")
 +        if (prefabFile.exists()) matches << prefabFile
-+      }
-+      matches.each { prefabConfig ->
-+        prefabConfig.setLastModified(System.currentTimeMillis())
-+      }
-+    }
-+  }
-+}
-+
- if (isNewArchitectureEnabled()) {
-   apply plugin: "com.facebook.react"
- }
-@@ -127,6 +141,8 @@ android {
-         java.srcDirs += [
-           // React Codegen files
-           "${project.buildDir}/generated/source/codegen/java",
-+        ]
-+        kotlin.srcDirs += [
-           "src/newarch"
-         ]
-       } else {
-diff --git a/node_modules/react-native-nitro-modules/android/fix-prefab.gradle b/node_modules/react-native-nitro-modules/android/fix-prefab.gradle
-index d6c010e..23c66f4 100644
---- a/node_modules/react-native-nitro-modules/android/fix-prefab.gradle
-+++ b/node_modules/react-native-nitro-modules/android/fix-prefab.gradle
-@@ -11,41 +11,3 @@ tasks.configureEach { task ->
-     task.dependsOn("externalNativeBuild${variantName}")
-   }
- }
--
--afterEvaluate {
--  def abis = reactNativeArchitectures()
--  rootProject.allprojects.each { proj ->
--    if (proj === rootProject) return
--
--    def dependsOnThisLib = proj.configurations.findAll { it.canBeResolved }.any { config ->
--      config.dependencies.any { dep ->
--        dep.group == project.group && dep.name == project.name
--      }
+       }
 -    }
 -    if (!dependsOnThisLib && proj != project) return
 -
@@ -93,7 +79,8 @@ index d6c010e..23c66f4 100644
 -        matches.each { prefabConfig ->
 -          prefabConfig.setLastModified(System.currentTimeMillis())
 -        }
--      }
--    }
--  }
--}
++      matches.each { prefabConfig ->
++        prefabConfig.setLastModified(System.currentTimeMillis())
+       }
+     }
+   }

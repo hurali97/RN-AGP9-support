@@ -1,19 +1,8 @@
 diff --git a/node_modules/react-native-nitro-image/android/build.gradle b/node_modules/react-native-nitro-image/android/build.gradle
-index 436ada9..7e2895b 100644
+index 436ada9..218e935 100644
 --- a/node_modules/react-native-nitro-image/android/build.gradle
 +++ b/node_modules/react-native-nitro-image/android/build.gradle
-@@ -3,10 +3,6 @@ buildscript {
-     google()
-     mavenCentral()
-   }
--
--  dependencies {
--    classpath "com.android.tools.build:gradle:8.10.1"
--  }
- }
- 
- def reactNativeArchitectures() {
-@@ -19,10 +15,29 @@ def isNewArchitectureEnabled() {
+@@ -19,7 +19,6 @@ def isNewArchitectureEnabled() {
  }
  
  apply plugin: "com.android.library"
@@ -21,6 +10,22 @@ index 436ada9..7e2895b 100644
  apply from: '../nitrogen/generated/android/NitroImage+autolinking.gradle'
  apply from: "./fix-prefab.gradle"
  
+diff --git a/node_modules/react-native-nitro-image/android/fix-prefab.gradle b/node_modules/react-native-nitro-image/android/fix-prefab.gradle
+index d6c010e..57513a0 100644
+--- a/node_modules/react-native-nitro-image/android/fix-prefab.gradle
++++ b/node_modules/react-native-nitro-image/android/fix-prefab.gradle
+@@ -12,39 +12,20 @@ tasks.configureEach { task ->
+   }
+ }
+ 
+-afterEvaluate {
+-  def abis = reactNativeArchitectures()
+-  rootProject.allprojects.each { proj ->
+-    if (proj === rootProject) return
+-
+-    def dependsOnThisLib = proj.configurations.findAll { it.canBeResolved }.any { config ->
+-      config.dependencies.any { dep ->
+-        dep.group == project.group && dep.name == project.name
 +androidComponents {
 +  onVariants(selector().all()) { variant ->
 +    def abis = reactNativeArchitectures()
@@ -32,36 +37,7 @@ index 436ada9..7e2895b 100644
 +      searchDir.eachDir { randomDir ->
 +        def prefabFile = new File(randomDir, "${abi}/prefab_config.json")
 +        if (prefabFile.exists()) matches << prefabFile
-+      }
-+      matches.each { prefabConfig ->
-+        prefabConfig.setLastModified(System.currentTimeMillis())
-+      }
-+    }
-+  }
-+}
-+
-+
- if (isNewArchitectureEnabled()) {
-   apply plugin: "com.facebook.react"
- }
-diff --git a/node_modules/react-native-nitro-image/android/fix-prefab.gradle b/node_modules/react-native-nitro-image/android/fix-prefab.gradle
-index d6c010e..23c66f4 100644
---- a/node_modules/react-native-nitro-image/android/fix-prefab.gradle
-+++ b/node_modules/react-native-nitro-image/android/fix-prefab.gradle
-@@ -11,41 +11,3 @@ tasks.configureEach { task ->
-     task.dependsOn("externalNativeBuild${variantName}")
-   }
- }
--
--afterEvaluate {
--  def abis = reactNativeArchitectures()
--  rootProject.allprojects.each { proj ->
--    if (proj === rootProject) return
--
--    def dependsOnThisLib = proj.configurations.findAll { it.canBeResolved }.any { config ->
--      config.dependencies.any { dep ->
--        dep.group == project.group && dep.name == project.name
--      }
+       }
 -    }
 -    if (!dependsOnThisLib && proj != project) return
 -
@@ -86,20 +62,25 @@ index d6c010e..23c66f4 100644
 -        matches.each { prefabConfig ->
 -          prefabConfig.setLastModified(System.currentTimeMillis())
 -        }
--      }
--    }
--  }
--}
++      matches.each { prefabConfig ->
++        prefabConfig.setLastModified(System.currentTimeMillis())
+       }
+     }
+   }
 diff --git a/node_modules/react-native-nitro-image/nitrogen/generated/android/NitroImage+autolinking.gradle b/node_modules/react-native-nitro-image/nitrogen/generated/android/NitroImage+autolinking.gradle
-index 21cbffb..fe43293 100644
+index 21cbffb..1d1b8e4 100644
 --- a/node_modules/react-native-nitro-image/nitrogen/generated/android/NitroImage+autolinking.gradle
 +++ b/node_modules/react-native-nitro-image/nitrogen/generated/android/NitroImage+autolinking.gradle
-@@ -18,7 +18,7 @@ logger.warn("[NitroModules] 🔥 NitroImage is boosted by nitro!")
+@@ -18,10 +18,8 @@ logger.warn("[NitroModules] 🔥 NitroImage is boosted by nitro!")
  android {
    sourceSets {
      main {
 -      java.srcDirs += [
-+      kotlin.srcDirs += [
-         // Nitrogen files
-         "${project.projectDir}/../nitrogen/generated/android/kotlin"
-       ]
+-        // Nitrogen files
+-        "${project.projectDir}/../nitrogen/generated/android/kotlin"
+-      ]
++      // Nitrogen files
++      kotlin.directories.add("${project.projectDir}/../nitrogen/generated/android/kotlin")
+     }
+   }
+ }

@@ -1,19 +1,8 @@
 diff --git a/node_modules/react-native-mmkv/android/build.gradle b/node_modules/react-native-mmkv/android/build.gradle
-index c7d64d5..a871dde 100644
+index c7d64d5..691e466 100644
 --- a/node_modules/react-native-mmkv/android/build.gradle
 +++ b/node_modules/react-native-mmkv/android/build.gradle
-@@ -3,10 +3,6 @@ buildscript {
-     google()
-     mavenCentral()
-   }
--
--  dependencies {
--    classpath "com.android.tools.build:gradle:9.1.0"
--  }
- }
- 
- def reactNativeArchitectures() {
-@@ -19,10 +15,28 @@ def isNewArchitectureEnabled() {
+@@ -19,7 +19,6 @@ def isNewArchitectureEnabled() {
  }
  
  apply plugin: "com.android.library"
@@ -21,6 +10,32 @@ index c7d64d5..a871dde 100644
  apply from: '../nitrogen/generated/android/NitroMmkv+autolinking.gradle'
  apply from: "./fix-prefab.gradle"
  
+@@ -145,6 +144,8 @@ dependencies {
+   implementation project(":react-native-nitro-modules")
+ 
+   // Add a dependency on mmkv core (this ships a C++ prefab)
+-  implementation "io.github.zhongwuzw:mmkv:2.4.0"
++  implementation("io.github.zhongwuzw:mmkv:2.4.0") {
++    exclude group: "io.github.zhongwuzw", module: "annotation"
++  }
+ }
+ 
+diff --git a/node_modules/react-native-mmkv/android/fix-prefab.gradle b/node_modules/react-native-mmkv/android/fix-prefab.gradle
+index d6c010e..57513a0 100644
+--- a/node_modules/react-native-mmkv/android/fix-prefab.gradle
++++ b/node_modules/react-native-mmkv/android/fix-prefab.gradle
+@@ -12,39 +12,20 @@ tasks.configureEach { task ->
+   }
+ }
+ 
+-afterEvaluate {
+-  def abis = reactNativeArchitectures()
+-  rootProject.allprojects.each { proj ->
+-    if (proj === rootProject) return
+-
+-    def dependsOnThisLib = proj.configurations.findAll { it.canBeResolved }.any { config ->
+-      config.dependencies.any { dep ->
+-        dep.group == project.group && dep.name == project.name
 +androidComponents {
 +  onVariants(selector().all()) { variant ->
 +    def abis = reactNativeArchitectures()
@@ -32,45 +47,7 @@ index c7d64d5..a871dde 100644
 +      searchDir.eachDir { randomDir ->
 +        def prefabFile = new File(randomDir, "${abi}/prefab_config.json")
 +        if (prefabFile.exists()) matches << prefabFile
-+      }
-+      matches.each { prefabConfig ->
-+        prefabConfig.setLastModified(System.currentTimeMillis())
-+      }
-+    }
-+  }
-+}
-+
- if (isNewArchitectureEnabled()) {
-   apply plugin: "com.facebook.react"
- }
-@@ -145,6 +159,8 @@ dependencies {
-   implementation project(":react-native-nitro-modules")
- 
-   // Add a dependency on mmkv core (this ships a C++ prefab)
--  implementation "io.github.zhongwuzw:mmkv:2.4.0"
-+  implementation("io.github.zhongwuzw:mmkv:2.4.0") {
-+    exclude group: "io.github.zhongwuzw", module: "annotation"
-+  }
- }
- 
-diff --git a/node_modules/react-native-mmkv/android/fix-prefab.gradle b/node_modules/react-native-mmkv/android/fix-prefab.gradle
-index d6c010e..23c66f4 100644
---- a/node_modules/react-native-mmkv/android/fix-prefab.gradle
-+++ b/node_modules/react-native-mmkv/android/fix-prefab.gradle
-@@ -11,41 +11,3 @@ tasks.configureEach { task ->
-     task.dependsOn("externalNativeBuild${variantName}")
-   }
- }
--
--afterEvaluate {
--  def abis = reactNativeArchitectures()
--  rootProject.allprojects.each { proj ->
--    if (proj === rootProject) return
--
--    def dependsOnThisLib = proj.configurations.findAll { it.canBeResolved }.any { config ->
--      config.dependencies.any { dep ->
--        dep.group == project.group && dep.name == project.name
--      }
+       }
 -    }
 -    if (!dependsOnThisLib && proj != project) return
 -
@@ -95,20 +72,25 @@ index d6c010e..23c66f4 100644
 -        matches.each { prefabConfig ->
 -          prefabConfig.setLastModified(System.currentTimeMillis())
 -        }
--      }
--    }
--  }
--}
++      matches.each { prefabConfig ->
++        prefabConfig.setLastModified(System.currentTimeMillis())
+       }
+     }
+   }
 diff --git a/node_modules/react-native-mmkv/nitrogen/generated/android/NitroMmkv+autolinking.gradle b/node_modules/react-native-mmkv/nitrogen/generated/android/NitroMmkv+autolinking.gradle
-index 070028a..10f72ac 100644
+index 070028a..4597f2c 100644
 --- a/node_modules/react-native-mmkv/nitrogen/generated/android/NitroMmkv+autolinking.gradle
 +++ b/node_modules/react-native-mmkv/nitrogen/generated/android/NitroMmkv+autolinking.gradle
-@@ -18,7 +18,7 @@ logger.warn("[NitroModules] 🔥 NitroMmkv is boosted by nitro!")
+@@ -18,10 +18,8 @@ logger.warn("[NitroModules] 🔥 NitroMmkv is boosted by nitro!")
  android {
    sourceSets {
      main {
 -      java.srcDirs += [
-+      kotlin.srcDirs += [
-         // Nitrogen files
-         "${project.projectDir}/../nitrogen/generated/android/kotlin"
-       ]
+-        // Nitrogen files
+-        "${project.projectDir}/../nitrogen/generated/android/kotlin"
+-      ]
++      // Nitrogen files
++      kotlin.directories.add("${project.projectDir}/../nitrogen/generated/android/kotlin")
+     }
+   }
+ }
